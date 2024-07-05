@@ -1,14 +1,37 @@
-import { useState } from 'react';
-
+import { useState } from "react";
+import axios from "axios";
 const ReferForm = () => {
-  const [refereeName, setRefereeName] = useState('');
-  const [refereeEmail, setRefereeEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [refereeName, setRefereeName] = useState("");
+  const [refereeEmail, setRefereeEmail] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here (e.g., send data to backend)
-    console.log({ refereeName, refereeEmail, message });
+    try {
+      const url = "https://accredian-backend-task-64sk.onrender.com";
+      const data = {
+        refereeName,
+        refereeEmail,
+        message,
+      };
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("No token available");
+      }
+      await axios.post(url, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // Handle error appropriately
+    } finally {
+      setRefereeName("");
+      setRefereeEmail("");
+      setMessage("");
+      window.location.reload();
+    }
   };
 
   return (

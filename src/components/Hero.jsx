@@ -15,7 +15,7 @@ const Hero = () => {
           </h1>
           <p className="py-6 text-2xl font-semibold">
             Get a chance to win upto{" "}
-            <h5 className="text-4xl font-bold">Rs.15000 </h5>
+            <p className="text-4xl font-bold">Rs.15000 </p>
           </p>
           <button
             className="btn btn-active btn-accent btn-lg lg:text-2xl font-serif"

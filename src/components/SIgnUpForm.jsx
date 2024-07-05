@@ -1,17 +1,37 @@
-import { useState } from 'react';
-
+import { useState } from "react";
+import axios from "axios";
 const SignUpForm = ({ isSignUp, onToggle }) => {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', { email, username, password });
-    // Reset form fields after submission (optional)
-    setEmail('');
-    setUsername('');
-    setPassword('');
+    try {
+      const baseURL = "https://accredian-backend-task-64sk.onrender.com";
+      const path = isSignUp ? "/register" : "/login";
+      const url = baseURL + path;
+      const data = isSignUp ? { email, username, password } : { username, password };
+
+      const response = await axios.post(url, data);
+
+      // Handle the token in the response
+      const { token } = response.data;
+      if (token) {
+        localStorage.setItem('authToken', token);
+        //window.location.reload(); // Reload to update the authenticated state
+      }
+
+      // Additional logic after successful submission can be added here
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // Handle error appropriately
+    } finally {
+      setEmail("");
+      setUsername("");
+      setPassword("");
+      //window.location.reload();
+    }
   };
 
   return (
@@ -33,7 +53,7 @@ const SignUpForm = ({ isSignUp, onToggle }) => {
         <input
           type="text"
           className="grow"
-          placeholder="Username"
+          placeholder="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
@@ -55,7 +75,7 @@ const SignUpForm = ({ isSignUp, onToggle }) => {
           <input
             type="text"
             className="grow"
-            placeholder="Email"
+            placeholder="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -76,7 +96,7 @@ const SignUpForm = ({ isSignUp, onToggle }) => {
         <input
           type="password"
           className="grow"
-          placeholder="Password"
+          placeholder="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -85,18 +105,14 @@ const SignUpForm = ({ isSignUp, onToggle }) => {
 
       {/* Submit button */}
       <button type="submit" className="btn btn-accent text-xl font-serif">
-        {isSignUp ? 'Sign Up' : 'Log In'}
+        {isSignUp ? "Sign Up" : "Log In"}
       </button>
 
       {/* Toggle link */}
       <p className="text-center">
-        {isSignUp ? 'Already have an account?' : 'Don\'t have an account?'}
-        <button
-          type="button"
-          className="text-accent ml-1"
-          onClick={onToggle}
-        >
-          {isSignUp ? 'Log In' : 'Sign Up'}
+        {isSignUp ? "Already have an account?" : "Don't have an account?"}
+        <button type="button" className="text-accent ml-1" onClick={onToggle}>
+          {isSignUp ? "Log In" : "Sign Up"}
         </button>
       </p>
     </form>
